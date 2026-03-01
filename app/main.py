@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import session
 from .database import engine, SessionLocal
 from . import models, schemas, crud
+from typing import List
+
 
 
 
@@ -29,6 +31,11 @@ def create_product(product: schemas.ProdutoCreate, db: session = Depends(get_db)
 @app.get("/products/", response_model=list[schemas.ProdutoResponse])
 def list(db: session = Depends(get_db)):
     return crud.list_product(db)
+
+
+@app.get("/products/low_stock", response_model=List[schemas.ProdutoResponse])
+def low_stock(db: session = Depends(get_db)):
+    return crud.get_low_stock_products(db)
 
 
 @app.get("/products/{id}", response_model=schemas.ProdutoResponse)

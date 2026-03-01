@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 
+
 def create_product(db: Session, produto: schemas.ProdutoCreate):
     db_product = models.Product(**produto.model_dump())
     db.add(db_product)
@@ -33,3 +34,7 @@ def delete_product(db: Session, product_id: int):
         db.delete(db_product)
         db.commit()
     return db_product
+
+
+def get_low_stock_products(db: Session):
+    return db.query(models.Product).filter(models.Product.quantity <= models.Product.min_stock).all()
