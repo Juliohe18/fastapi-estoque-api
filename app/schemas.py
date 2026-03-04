@@ -19,3 +19,9 @@ class ProdutoResponse(ProdutoBase):
     class Config:
         from_attributes = True
 
+class PaginatedResponse(BaseModel):
+    page: int
+    per_page: int
+    total: int
+    items: list[ProdutoResponse]
+

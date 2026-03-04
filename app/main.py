@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.orm import session
 from .database import engine, SessionLocal
 from . import models, schemas, crud
@@ -28,9 +28,9 @@ def create_product(product: schemas.ProdutoCreate, db: session = Depends(get_db)
     return crud.create_product(db, product)
     
 
-@app.get("/products/", response_model=list[schemas.ProdutoResponse])
-def list(db: session = Depends(get_db)):
-    return crud.list_product(db)
+@app.get("/products/", response_model=schemas.PaginatedResponse)
+def list(db: session = Depends(get_db), page: int = Query(1, ge=1), per_page: int = Query(10, ge=1, le=100)):
+    return crud.list_product(db, page, per_page)
 
 
 @app.get("/products/low_stock", response_model=List[schemas.ProdutoResponse])
