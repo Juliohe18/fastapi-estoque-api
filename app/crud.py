@@ -12,16 +12,14 @@ def create_product(db: Session, produto: schemas.ProdutoCreate):
 
 def list_product(db: Session, page: int = 1, per_page: int = 10):
     offset = (page - 1) * per_page
-    products =  db.query(models.Product).offset(offset).limit(per_page).all()
-    
+    products = db.query(models.Product).offset(offset).limit(per_page).all()
     total = db.query(models.Product). count()
-
     return {
         "page": page,
         "per_page": per_page,
         "total": total,
         "items": products
-    } 
+    }
 
 
 def search_product(db: Session, product_id: int):
@@ -46,5 +44,16 @@ def delete_product(db: Session, product_id: int):
     return db_product
 
 
-def get_low_stock_products(db: Session):
-    return db.query(models.Product).filter(models.Product.quantity <= models.Product.min_stock).all()
+def get_low_stock_products(db: Session, page: int = 1, per_page: int = 10):
+    offset = (page - 1) * per_page
+    total = db.query(models.Product).filter(
+        models.Product.quantity <= models.Product.min_stock).count()
+    products = db.query(models.Product).filter(
+        models.Product.quantity <= models.Product.min_stock).offset(offset).limit(per_page)
+
+    return {
+        "page": page,
+        "per_page": per_page,
+        "total": total,
+        "items": products
+    }

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer, Float
 from .database import Base
 
+
 class Product(Base):
     __tablename__ = "produtos"
 
@@ -9,7 +10,6 @@ class Product(Base):
     quantity = Column(Integer)
     min_stock = Column(Integer)
     price = Column(Float)
-    
 
 
 def __init__(self, name, quantity, min_stock, price):
@@ -17,6 +17,3 @@ def __init__(self, name, quantity, min_stock, price):
     self.quantity = quantity
     self.min_stock = min_stock
     self.price = price
-    
-    
-    
