@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from . import main
 
 class ProdutoBase(BaseModel):
     name: str
@@ -28,3 +28,15 @@ class PaginatedResponse(BaseModel):
     per_page: int
     total: int
     items: list[ProdutoResponse]
+
+
+class ProductNamePaginatedResponse(BaseModel):
+    page: int
+    per_page: int
+    total: int
+    items: list[str]
+
+
+
+    
+

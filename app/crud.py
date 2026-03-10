@@ -1,19 +1,32 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
-
+from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 
 def create_product(db: Session, produto: schemas.ProdutoCreate):
-    db_product = models.Product(**produto.model_dump())
-    db.add(db_product)
-    db.commit()
-    db.refresh(db_product)
+    existing_product = db.query(models.Product).filter(models.Product.name == produto.name).first()
+    if existing_product:
+        raise HTTPException(status_code=400,
+                            detail="Produto já cadastrado")
+    db_product = models.Product(**produto.model_dump(exclude_unset=True))
+    try:
+        db.add(db_product)
+        db.commit()
+        db.refresh(db_product)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail="Erro ao criar produto"
+        )
+    
     return db_product
 
 
 def list_product(db: Session, page: int = 1, per_page: int = 10):
     offset = (page - 1) * per_page
-    products = db.query(models.Product).offset(offset).limit(per_page).all()
-    total = db.query(models.Product). count()
+    query =  db.query(models.Product)
+    total = query.count()
+    products = query.offset(offset).limit(per_page).all()
     return {
         "page": page,
         "per_page": per_page,
@@ -23,7 +36,9 @@ def list_product(db: Session, page: int = 1, per_page: int = 10):
 
 
 def search_product(db: Session, product_id: int):
-    return db.query(models.Product).filter(product_id == models.Product.id).first()
+    product = db.query(models.Product).filter(product_id == models.Product.id).first()
+    return product
+        
 
 
 def update_product(db: Session, product_id: int, product: schemas.ProdutoUpdate):
@@ -57,3 +72,17 @@ def get_low_stock_products(db: Session, page: int = 1, per_page: int = 10):
         "total": total,
         "items": products
     }
+
+
+def get_list_name(db: Session, page: int = 1, per_page: int = 10):
+    offset = (page - 1) * per_page
+    products_name = db.query(models.Product.name).offset(offset).limit(per_page).all()
+    total = db.query(models.Product.name).count()
+    return {
+        "page": page,
+        "per_page": per_page,
+        "total": total,
+        "items": [p.name for p in products_name]
+    }
+
+

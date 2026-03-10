@@ -26,7 +26,7 @@ def create_product(product: schemas.ProdutoCreate, db: session = Depends(get_db)
 
 
 @app.get("/products/", response_model=schemas.PaginatedResponse)
-def list(db: session = Depends(get_db), page: int = Query(1, ge=1), per_page: int = Query(10, ge=1, le=100)):
+def list( db: session = Depends(get_db), page: int = Query(1, ge=1), per_page: int = Query(10, ge=1, le=100)):
     return crud.list_product(db, page, per_page)
 
 
@@ -35,7 +35,12 @@ def low_stock(db: session = Depends(get_db), page: int = Query(1, ge=1), per_pag
     return crud.get_low_stock_products(db, page, per_page)
 
 
-@app.get("/products/{id}", response_model=schemas.ProdutoResponse)
+@app.get("/products/name/{product_name}", response_model=schemas.ProductNamePaginatedResponse)
+def list_name(db: session = Depends(get_db)):
+   return crud.get_list_name(db) 
+
+
+@app.get("/products/id/{product_id}", response_model=schemas.ProdutoResponse)
 def search(product_id: int, db: session = Depends(get_db)):
     product = crud.search_product(db, product_id)
     if not product:
@@ -43,7 +48,7 @@ def search(product_id: int, db: session = Depends(get_db)):
     return product
 
 
-@app.put("/products/{id}", response_model=schemas.ProdutoResponse)
+@app.put("/products/update/{update_product}", response_model=schemas.ProdutoResponse)
 def update(product_id: int, product: schemas.ProdutoUpdate, db: session = Depends(get_db)):
     updated_product = crud.update_product(db, product_id, product)
     if not updated_product:
@@ -51,7 +56,7 @@ def update(product_id: int, product: schemas.ProdutoUpdate, db: session = Depend
     return updated_product
 
 
-@app.delete("/products/{id}")
+@app.delete("/products/delte/{delete_product}")
 def delete(product_id: int, db: session = Depends(get_db)):
     product = crud.delete_product(db, product_id)
     if not product:
