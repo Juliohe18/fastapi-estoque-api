@@ -56,7 +56,7 @@ def update(product_id: int, product: schemas.ProdutoUpdate, db: session = Depend
     return updated_product
 
 
-@app.delete("/products/delte/{delete_product}")
+@app.delete("/products/delete/{delete_product}")
 def delete(product_id: int, db: session = Depends(get_db)):
     product = crud.delete_product(db, product_id)
     if not product:

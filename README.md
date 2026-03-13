@@ -15,22 +15,52 @@ API REST desenvolvida com FastAPI e PostgreSQL para gerenciamento de produtos.
 - Criar produto 
 - Listar Produto
 - Buscar produto por ID
+- Listar produtos com estoque baixo
+- Listar produtos apenas pelo nome de cada produto
 - Atualizar produto 
 - Deletar produto
 
-## Rodando com Docker (PostgreSQL)
+## Como executar o projeto
 
-'''bash
-docker run --name meu-postgres \
--e POSTGRES_PASSWORD=admin123 \
--e POSTGRES_DB=estoque_db \
--p 5432:5432 \
--D postgres
-'''
-## Rodar aplicação
+1. Clonar o repositório(comandos terminal)
+git clone https://github.com/seu-usuario/fastapi-estoque-api.git
 
-'''bash
-uvicorn app.main:app --reload
-'''
-Acesse:
-http://127.0.0.1:8000/docs
+cd fastapi-estoque-api
+
+2. Rodar o projeto com Docker(comando terminal)
+docker compose up --build
+
+3. Acessar a API
+Após iniciar os containners, a API estará disponivel em:
+
+http://localhost:8000
+
+Documentação interativa:
+
+
+http://localhost:8000/docs
+
+## Endpoints da API
+
+Produtos
+
+POST /products/ Create Product
+- Cria produtos no banco de dados
+
+GET /products/ List
+- Mostra uma lista com todos os produtos criados e suas respectivas informações
+
+GET /products/low_stock Low Stock
+- Mostra uma lista com todos os produtos abaixo do estoque minimo requisitado para cada um
+
+GET /products/name/{product_name} List Name
+- Mostra uma lista com apenas os nomes de todos os produtos cadastrados
+
+GET /products/id/{product_id} Search
+- Busca produtos cadastrados pelo seu respectivo ID
+
+PUT /products/update/{update_product} Update
+- Faz alterações nas informações de produtos cadastrados
+
+DELETE /products/delete/{delete_product} Delete
+- Deleta um produto e todas as suas informações do banco de dados através de seu respectivo ID
